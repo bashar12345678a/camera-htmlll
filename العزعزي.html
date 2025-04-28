@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📸 التقاط تلقائي</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    video, canvas {
+      display: block;
+      margin: 10px auto;
+      max-width: 100%;
+    }
+    #download {
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📷 يتم التقاط الصورة تلقائيًا</h2>
+  <video id="video" autoplay playsinline width="320" height="240"></video>
+  <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+  <a id="download" download="photo.png">📥 تحميل الصورة</a>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const download = document.getElementById('download');
+
+    // طلب الوصول إلى الكاميرا الأمامية
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+
+        // التقاط الصورة بعد ثانيتين
+        setTimeout(() => {
+          const context = canvas.getContext('2d');
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const dataURL = canvas.toDataURL('image/png');
+
+          // عرض رابط التحميل
+          download.href = dataURL;
+          download.style.display = 'inline-block';
+          download.textContent = '📥 تحميل الصورة';
+        }, 2000);
+      })
+      .catch(err => {
+        alert('⚠️ حدث خطأ في الوصول إلى الكاميرا: ' + err);
+      });
+  </script>
+</body>
+</html>
